@@ -21,11 +21,11 @@ public class TileEntityRendererGrave extends TileEntityRenderer<TileEntityGrave>
 	private static final Pattern FORMAT_PATTERN = Pattern.compile("§[0-9a-fk-or]|§<.*?>");
 	private final Minecraft mc = Minecraft.getMinecraft();
 
-	private final Cube mainCube = new Cube(0, 0);
+	private final Cube mainCube = new Cube(0, 0, 28, 24);
 
 	public TileEntityRendererGrave() {
 		this.mainCube.addBox(
-			0, 0, 0, 16, 16, 16
+			0, 0, 0, 10, 16, 4
 		);
 	}
 
@@ -43,7 +43,6 @@ public class TileEntityRendererGrave extends TileEntityRenderer<TileEntityGrave>
 		float scale = 1.0F / 16.0F;
 
 		GL11.glDisable(GL11.GL_LIGHTING);
-		GL11.glDisable(GL11.GL_CULL_FACE);
 
 		GL11.glPushMatrix();
 
@@ -51,23 +50,19 @@ public class TileEntityRendererGrave extends TileEntityRenderer<TileEntityGrave>
 		GL11.glScalef(scale, scale, scale);
 		GL11.glRotatef(180, 0, 0, 1);
 
-		GL11.glPushMatrix();
-		GL11.glTranslatef(-16, -16, 0);
-
-		this.renderDispatcher.textureManager.bindTexture(
-			this.renderDispatcher.textureManager.loadTexture("/assets/minecraft/textures/block/cobbled_stone.png")
-		);
-		this.mainCube.render(1);
-
-		GL11.glPopMatrix();
-
 		GL11.glTranslatef(-8, -16, 8);
 
 		float[] angles = { 270, 90, 0, 180 };
 		float angle = angles[te.getBlockMeta() & 0b11];
 		GL11.glRotatef(angle, 0, 1, 0);
 
-		GL11.glTranslatef(-8, 0, 0);
+		GL11.glPushMatrix();
+		GL11.glTranslatef(-5, 0, -0);
+
+		this.renderDispatcher.textureManager.bindTexture(
+			this.renderDispatcher.textureManager.loadTexture("/assets/btagraves/textures/block/grave.png")
+		);
+		this.mainCube.render(1);
 
 		this.renderDispatcher.textureManager.bindDownloadableTexture(
 			te.skinUrl,
@@ -75,19 +70,29 @@ public class TileEntityRendererGrave extends TileEntityRenderer<TileEntityGrave>
 			GraveSkinParser.instance
 		);
 
+		float headOffsetX = 3;
+		@SuppressWarnings("SuspiciousNameCombination")
+		float headOffsetY = headOffsetX;
+
+		float epsilon = 0.001F;
+
 		t.startDrawingQuads();
-		t.addVertexWithUV(16.0F, 0.0F, 0.0F, 1.0F, 0.0F);
-		t.addVertexWithUV(0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
-		t.addVertexWithUV(0.0F, 16.0F, 0.0F, 0.0F, 1.0F);
-		t.addVertexWithUV(16.0F, 16.0F, 0.0F, 1.0F, 1.0F);
+		t.addVertexWithUV(headOffsetX + 4.0F, headOffsetY + 0.0F, -epsilon, 1.0F, 0.0F);
+		t.addVertexWithUV(headOffsetX + 0.0F, headOffsetY + 0.0F, -epsilon, 0.0F, 0.0F);
+		t.addVertexWithUV(headOffsetX + 0.0F, headOffsetY + 4.0F, -epsilon, 0.0F, 1.0F);
+		t.addVertexWithUV(headOffsetX + 4.0F, headOffsetY + 4.0F, -epsilon, 1.0F, 1.0F);
 		t.draw();
 
-		GL11.glTranslatef(8.0F, -48.0F, 0.0F);
+		GL11.glPopMatrix();
+
+		float textScale = 0.08F;
+		GL11.glTranslatef(0, 8, -epsilon);
+		GL11.glScalef(textScale, textScale, textScale);
 
 		GL11.glDepthMask(false);
 
-		String text = TextFormatting.WHITE + "PitsPower " + TextFormatting.RED + "pissed his pants so much he died.";
-		int maxWidth = 100;
+		String text = TextFormatting.WHITE + te.playerName + " " + TextFormatting.RED + "fuckin' died. How crazy is that?";
+		int maxWidth = 70;
 
 		List<String> lines = FONT_RENDERER.splitCharsIntoLines(
 			propagateFormattingToWords(text),
@@ -110,7 +115,6 @@ public class TileEntityRendererGrave extends TileEntityRenderer<TileEntityGrave>
 		GL11.glPopMatrix();
 
 		GL11.glEnable(GL11.GL_LIGHTING);
-		GL11.glEnable(GL11.GL_CULL_FACE);
 	}
 
 	public static String propagateFormattingToWords(String input) {

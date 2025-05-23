@@ -10,6 +10,9 @@ import net.minecraft.client.render.block.color.BlockColorDispatcher;
 import net.minecraft.client.render.block.model.BlockModelDispatcher;
 import net.minecraft.client.render.item.model.ItemModelDispatcher;
 import net.minecraft.core.block.Block;
+import net.minecraft.core.block.tag.BlockTags;
+import net.minecraft.core.sound.BlockSound;
+import net.minecraft.core.sound.BlockSounds;
 import net.minecraft.core.util.collection.NamespaceID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +76,10 @@ public class BtaGraves implements ModInitializer, RecipeEntrypoint, GameStartEnt
 
 		testBlock = new BlockBuilder(MOD_ID)
 			.setTileEntity(TileEntityGrave::new)
+			.setBlockSound(BlockSounds.STONE)
+			.setHardness(1.0F)
+			.setResistance(10.0F)
+			.setTags(BlockTags.MINEABLE_BY_PICKAXE)
 			.build(
 				"grave",
 				startingBlockId++,
