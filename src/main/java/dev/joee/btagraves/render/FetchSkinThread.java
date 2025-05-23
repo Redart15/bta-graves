@@ -19,6 +19,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class FetchSkinThread extends Thread {
+	private static int counter = 0;
 	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 	private static final JsonParser jsonParser = new JsonParser();
@@ -30,24 +31,36 @@ public class FetchSkinThread extends Thread {
 		this.tileEntity = te;
 
 		String name = this.tileEntity.playerName;
-		if (!skinUrls.containsKey(name)) {
-			Future<String> url = executor.submit(() -> this.getSkinUrl(name));
-			skinUrls.put(name, url);
-			synchronized (skinUrls) {
+		synchronized (skinUrls) {
+			if (skinUrls.containsKey(name)) {
+				if (skinUrls.get(name).isDone()) {
+					try {
+						this.tileEntity.skinUrl = skinUrls.get(name).get();
+					} catch (Exception ignored) {}
+				}
+			} else {
+				Future<String> url = executor.submit(() -> this.getSkinUrl(name));
+				skinUrls.put(name, url);
 				skinUrls.notifyAll();
 			}
+		}
+
+		if (!skinUrls.containsKey(name) || !skinUrls.get(name).isDone()) {
+			this.setDaemon(true);
+			this.setName("FetchSkinThread " + counter++);
+			this.start();
 		}
 	}
 
 	public void run() {
 		String name = this.tileEntity.playerName;
 		try {
-			while (!skinUrls.containsKey(name)) {
-				synchronized (skinUrls) {
-					skinUrls.wait();
+			synchronized (skinUrls) {
+				while (!skinUrls.containsKey(name)) {
+					skinUrls.wait(500);
 				}
+				this.tileEntity.skinUrl = skinUrls.get(name).get();
 			}
-			this.tileEntity.skinUrl = skinUrls.get(name).get();
 		} catch (InterruptedException | ExecutionException | NullPointerException e) {
 			LOGGER.error("Failed to fetch skin for {}", name);
 		}

@@ -14,13 +14,14 @@ public class TileEntityGrave extends TileEntity {
 	public TileEntityGrave() {
 		String[] names = new String[] { "PitsPower", "fnl4y", "shhtonk" };
 		this.playerName = names[RANDOM.nextInt(names.length)];
-		new FetchSkinThread(this).start();
+		new FetchSkinThread(this);
 	}
 
 	@Override
 	public void readFromNBT(CompoundTag nbt) {
 		super.readFromNBT(nbt);
 		this.playerName = nbt.getString("playerName");
+		new FetchSkinThread(this);
 	}
 
 	@Override

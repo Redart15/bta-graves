@@ -66,7 +66,7 @@ public class TileEntityRendererGrave extends TileEntityRenderer<TileEntityGrave>
 
 		this.renderDispatcher.textureManager.bindDownloadableTexture(
 			te.skinUrl,
-			this.mc.thePlayer.getDefaultEntityTexture(),
+			"/assets/btagraves/textures/block/head.png",
 			GraveSkinParser.instance
 		);
 
