@@ -1,5 +1,6 @@
 package dev.joee.btagraves.render;
 
+import dev.joee.btagraves.BtaGraves;
 import dev.joee.btagraves.tileentity.TileEntityGrave;
 import net.minecraft.client.render.LightmapHelper;
 import net.minecraft.client.render.font.FontRenderer;
@@ -10,6 +11,7 @@ import net.minecraft.client.render.tessellator.Tessellator;
 import net.minecraft.client.render.tileentity.TileEntityRenderer;
 import org.lwjgl.opengl.GL11;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -91,10 +93,9 @@ public class TileEntityRendererGrave extends TileEntityRenderer<TileEntityGrave>
 		String text = te.deathMessage;
 		int maxWidth = 70;
 
-		List<String> lines = FONT_RENDERER.splitCharsIntoLines(
+		List<String> lines = wrapText(
 			propagateFormattingToWords(text),
-			maxWidth,
-			null
+			maxWidth
 		);
 
 		for (int i = 0; i < lines.size(); i++) {
@@ -112,6 +113,49 @@ public class TileEntityRendererGrave extends TileEntityRenderer<TileEntityGrave>
 		GL11.glPopMatrix();
 
 		GL11.glEnable(GL11.GL_LIGHTING);
+	}
+
+	private static List<String> wrapText(String text, int maxWidth) {
+		List<String> lines = new ArrayList<>();
+		String[] words = text.split(" ");
+		StringBuilder currentLine = new StringBuilder();
+
+		for (String word : words) {
+			String testLine = currentLine.length() == 0 ? word : currentLine + " " + word;
+			if (FONT_RENDERER.stringWidth(testLine) <= maxWidth) {
+				currentLine.setLength(0);
+				currentLine.append(testLine);
+			} else {
+				if (currentLine.length() > 0) {
+					lines.add(currentLine.toString());
+					currentLine.setLength(0);
+				}
+				// Check if the word itself is longer than maxWidth
+				if (FONT_RENDERER.stringWidth(word) > maxWidth) {
+					// Break the word character by character
+					StringBuilder splitWord = new StringBuilder();
+					for (char c : word.toCharArray()) {
+						splitWord.append(c);
+						if (FONT_RENDERER.stringWidth(splitWord.toString()) > maxWidth) {
+							// Remove the last character and add the partial word
+							splitWord.setLength(splitWord.length() - 1);
+							lines.add(splitWord.toString());
+							splitWord.setLength(0);
+							splitWord.append(c);
+						}
+					}
+					currentLine.append(splitWord);
+				} else {
+					currentLine.append(word);
+				}
+			}
+		}
+
+		if (currentLine.length() > 0) {
+			lines.add(currentLine.toString());
+		}
+
+		return lines;
 	}
 
 	public static String propagateFormattingToWords(String input) {
