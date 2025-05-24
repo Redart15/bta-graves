@@ -7,6 +7,7 @@ import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
 import net.minecraft.core.block.entity.TileEntity;
 import net.minecraft.core.block.material.Material;
+import net.minecraft.core.block.material.MaterialColor;
 import net.minecraft.core.entity.Mob;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.enums.EnumDropCause;
@@ -25,7 +26,7 @@ import java.util.List;
 
 public class BlockLogicGrave extends BlockLogic  {
 	public BlockLogicGrave(Block<?> block) {
-		super(block, Material.stone);
+		super(block, new Material(MaterialColor.stone).setConductivity(-5).setAsStone());
 	}
 
 	@Override
@@ -57,12 +58,18 @@ public class BlockLogicGrave extends BlockLogic  {
 
 		te.mainInventory = player.inventory.mainInventory;
 		te.armorInventory = player.inventory.armorInventory;
+		world.updateTileEntityChunkAndSendToPlayer(x, y, z, te);
 
 		player.inventory.mainInventory = newMainInventory;
 		player.inventory.armorInventory = newArmorInventory;
 		player.inventory.setChanged();
 
 		return true;
+	}
+
+	@Override
+	public void dropBlockWithCause(World world, EnumDropCause cause, int x, int y, int z, int meta, TileEntity tileEntity, Player player) {
+		super.dropBlockWithCause(world, cause, x, y, z, meta, tileEntity, player);
 	}
 
 	@Override
@@ -84,9 +91,7 @@ public class BlockLogicGrave extends BlockLogic  {
 		ItemStack[] mainItems = te.mainInventory;
 		ItemStack[] armorItems = te.armorInventory;
 
-		List<ItemStack> resultList = new ArrayList<>(
-			superItems.length + mainItems.length + armorItems.length
-		);
+		List<ItemStack> resultList = new ArrayList<>();
 
 		Collections.addAll(resultList, superItems);
 		Collections.addAll(resultList, mainItems);

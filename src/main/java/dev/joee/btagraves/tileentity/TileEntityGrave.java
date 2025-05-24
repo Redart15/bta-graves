@@ -5,6 +5,8 @@ import com.mojang.nbt.tags.ListTag;
 import dev.joee.btagraves.render.FetchSkinThread;
 import net.minecraft.core.block.entity.TileEntity;
 import net.minecraft.core.item.ItemStack;
+import net.minecraft.core.net.packet.Packet;
+import net.minecraft.core.net.packet.PacketTileEntityData;
 
 import java.util.UUID;
 
@@ -31,6 +33,11 @@ public class TileEntityGrave extends TileEntity {
 	public void setUUID(UUID uuid) {
 		this.playerUuid = uuid;
 		new FetchSkinThread(this);
+	}
+
+	@Override
+	public Packet getDescriptionPacket() {
+		return new PacketTileEntityData(this);
 	}
 
 	@Override

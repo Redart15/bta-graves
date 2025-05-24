@@ -29,11 +29,11 @@ public class DeathMixin {
 		Player player = inventory.player;
 		World world = player.world;
 
-		int x = (int) Math.round(player.x - 0.5);
-		int y = (int) Math.round(player.y - 1.5);
-		int z = (int) Math.round(player.z - 0.5);
+		if (world != null && !world.isClientSide) {
+			int x = (int) Math.round(player.x - 0.5);
+			int y = (int) Math.round(player.y - 1.5);
+			int z = (int) Math.round(player.z - 0.5);
 
-		if (world != null) {
 			while (!world.isAirBlock(x, y, z) && y < world.getHeightBlocks() - 1) {
 				y += 1;
 			}
@@ -42,15 +42,15 @@ public class DeathMixin {
 				x, y, z,
 				BtaGraves.graveBlock.id()
 			);
-			world.setTileEntity(
-				x, y, z,
-				new TileEntityGrave(
-					player.uuid,
-					player.getDeathMessage(this.entityKilledBy),
-					inventory.mainInventory,
-					inventory.armorInventory
-				)
+
+			TileEntityGrave te = new TileEntityGrave(
+				player.uuid,
+				player.getDeathMessage(this.entityKilledBy),
+				inventory.mainInventory,
+				inventory.armorInventory
 			);
+
+			world.setTileEntity(x, y, z, te);
 
 			inventory.mainInventory = new ItemStack[36];
 			inventory.armorInventory = new ItemStack[4];
