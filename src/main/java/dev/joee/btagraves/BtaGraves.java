@@ -11,7 +11,7 @@ import net.minecraft.client.render.block.model.BlockModelDispatcher;
 import net.minecraft.client.render.item.model.ItemModelDispatcher;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.tag.BlockTags;
-import net.minecraft.core.sound.BlockSound;
+import net.minecraft.core.net.command.TextFormatting;
 import net.minecraft.core.sound.BlockSounds;
 import net.minecraft.core.util.collection.NamespaceID;
 import org.slf4j.Logger;
@@ -23,12 +23,14 @@ import turniplabs.halplibe.util.GameStartEntrypoint;
 import turniplabs.halplibe.util.ModelEntrypoint;
 import turniplabs.halplibe.util.RecipeEntrypoint;
 
+import java.util.UUID;
+
 
 public class BtaGraves implements ModInitializer, RecipeEntrypoint, GameStartEntrypoint, ModelEntrypoint {
     public static final String MOD_ID = "btagraves";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-	public static Block<?> testBlock;
+	public static Block<?> GRAVE;
 
     @Override
     public void onInitialize() {
@@ -74,8 +76,11 @@ public class BtaGraves implements ModInitializer, RecipeEntrypoint, GameStartEnt
 	public void beforeGameStart() {
 		int startingBlockId = 5678;
 
-		testBlock = new BlockBuilder(MOD_ID)
-			.setTileEntity(TileEntityGrave::new)
+		GRAVE = new BlockBuilder(MOD_ID)
+			.setTileEntity(() -> new TileEntityGrave(
+				UUID.fromString("f84c6a79-0a4e-45e0-879b-cd49ebd4c4e2"),
+				TextFormatting.WHITE + "Herobrine " + TextFormatting.RED + "is watching."
+			))
 			.setBlockSound(BlockSounds.STONE)
 			.setHardness(1.0F)
 			.setResistance(10.0F)

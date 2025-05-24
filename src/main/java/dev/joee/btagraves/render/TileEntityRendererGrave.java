@@ -1,7 +1,6 @@
 package dev.joee.btagraves.render;
 
 import dev.joee.btagraves.tileentity.TileEntityGrave;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.render.LightmapHelper;
 import net.minecraft.client.render.font.FontRenderer;
 import net.minecraft.client.render.font.FontRendererDefault;
@@ -9,7 +8,6 @@ import net.minecraft.client.render.font.SF;
 import net.minecraft.client.render.model.Cube;
 import net.minecraft.client.render.tessellator.Tessellator;
 import net.minecraft.client.render.tileentity.TileEntityRenderer;
-import net.minecraft.core.net.command.TextFormatting;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
@@ -19,7 +17,6 @@ import java.util.regex.Pattern;
 public class TileEntityRendererGrave extends TileEntityRenderer<TileEntityGrave> {
 	private static final FontRenderer FONT_RENDERER = new FontRendererDefault();
 	private static final Pattern FORMAT_PATTERN = Pattern.compile("§[0-9a-fk-or]|§<.*?>");
-	private final Minecraft mc = Minecraft.getMinecraft();
 
 	private final Cube mainCube = new Cube(0, 0, 28, 24);
 
@@ -91,7 +88,7 @@ public class TileEntityRendererGrave extends TileEntityRenderer<TileEntityGrave>
 
 		GL11.glDepthMask(false);
 
-		String text = TextFormatting.WHITE + te.playerName + " " + TextFormatting.RED + "fuckin' died. How crazy is that?";
+		String text = te.deathMessage;
 		int maxWidth = 70;
 
 		List<String> lines = FONT_RENDERER.splitCharsIntoLines(
