@@ -11,6 +11,7 @@ import net.minecraft.client.render.block.model.BlockModelDispatcher;
 import net.minecraft.client.render.item.model.ItemModelDispatcher;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.tag.BlockTags;
+import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.net.command.TextFormatting;
 import net.minecraft.core.sound.BlockSounds;
 import net.minecraft.core.util.collection.NamespaceID;
@@ -79,7 +80,9 @@ public class BtaGraves implements ModInitializer, RecipeEntrypoint, GameStartEnt
 		GRAVE = new BlockBuilder(MOD_ID)
 			.setTileEntity(() -> new TileEntityGrave(
 				UUID.fromString("f84c6a79-0a4e-45e0-879b-cd49ebd4c4e2"),
-				TextFormatting.WHITE + "Herobrine " + TextFormatting.RED + "is watching."
+				TextFormatting.WHITE + "Herobrine " + TextFormatting.RED + "is watching.",
+				new ItemStack[36],
+				new ItemStack[4]
 			))
 			.setBlockSound(BlockSounds.STONE)
 			.setHardness(1.0F)

@@ -1,17 +1,26 @@
 package dev.joee.btagraves.block;
 
+import dev.joee.btagraves.BtaGraves;
+import dev.joee.btagraves.tileentity.TileEntityGrave;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
+import net.minecraft.core.block.entity.TileEntity;
 import net.minecraft.core.block.material.Material;
 import net.minecraft.core.entity.Mob;
+import net.minecraft.core.entity.player.Player;
+import net.minecraft.core.enums.EnumDropCause;
+import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.util.helper.Direction;
 import net.minecraft.core.util.helper.Side;
 import net.minecraft.core.util.phys.AABB;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.WorldSource;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class BlockLogicGrave extends BlockLogic  {
 	public BlockLogicGrave(Block<?> block) {
@@ -26,6 +35,51 @@ public class BlockLogicGrave extends BlockLogic  {
 	@Override
 	public boolean isCubeShaped() {
 		return false;
+	}
+
+	@Override
+	public boolean onBlockRightClicked(World world, int x, int y, int z, Player player, Side side, double xHit, double yHit) {
+		super.onBlockRightClicked(world, x, y, z, player, side, xHit, yHit);
+
+		if (!player.isSneaking()) {
+			return false;
+		}
+
+		TileEntityGrave te = (TileEntityGrave) world.getTileEntity(x, y, z);
+
+		if (!player.uuid.equals(te.playerUuid)) {
+			return false;
+		}
+
+		ItemStack[] newMainInventory = te.mainInventory;
+		ItemStack[] newArmorInventory = te.armorInventory;
+
+		te.mainInventory = player.inventory.mainInventory;
+		te.armorInventory = player.inventory.armorInventory;
+
+		player.inventory.mainInventory = newMainInventory;
+		player.inventory.armorInventory = newArmorInventory;
+		player.inventory.setChanged();
+
+		return true;
+	}
+
+	@Override
+	public ItemStack[] getBreakResult(World world, EnumDropCause dropCause, int meta, TileEntity tileEntity) {
+		ItemStack[] superItems = super.getBreakResult(world, dropCause, meta, tileEntity);
+		if (superItems == null) {
+			superItems = new ItemStack[] {};
+		}
+		ItemStack[] mainItems = ((TileEntityGrave) tileEntity).mainInventory;
+		ItemStack[] armorItems = ((TileEntityGrave) tileEntity).armorInventory;
+
+		List<ItemStack> resultList = new ArrayList<>(
+			superItems.length + mainItems.length + armorItems.length
+		);
+		Collections.addAll(resultList, superItems);
+		Collections.addAll(resultList, mainItems);
+		Collections.addAll(resultList, armorItems);
+		return resultList.toArray(new ItemStack[] {});
 	}
 
 	@Override

@@ -1,9 +1,10 @@
 package dev.joee.btagraves.tileentity;
 
 import com.mojang.nbt.tags.CompoundTag;
-import dev.joee.btagraves.BtaGraves;
+import com.mojang.nbt.tags.ListTag;
 import dev.joee.btagraves.render.FetchSkinThread;
 import net.minecraft.core.block.entity.TileEntity;
+import net.minecraft.core.item.ItemStack;
 
 import java.util.UUID;
 
@@ -11,28 +12,81 @@ public class TileEntityGrave extends TileEntity {
 	public UUID playerUuid;
 	public String skinUrl;
 	public String deathMessage;
+	public ItemStack[] mainInventory;
+	public ItemStack[] armorInventory;
 
 	public TileEntityGrave() {}
 
-	public TileEntityGrave(UUID uuid, String deathMessage) {
+	public TileEntityGrave(UUID uuid, String deathMessage, ItemStack[] mainInventory, ItemStack[] armorInventory) {
 		this.playerUuid = uuid;
 		this.deathMessage = deathMessage;
+		this.mainInventory = mainInventory;
+		this.armorInventory = armorInventory;
 		new FetchSkinThread(this);
 	}
 
 	@Override
 	public void readFromNBT(CompoundTag nbt) {
 		super.readFromNBT(nbt);
-		this.playerUuid = UUID.fromString(nbt.getString("playerUuid"));
-		this.deathMessage = nbt.getString("deathMessage");
-		BtaGraves.LOGGER.info(this.deathMessage);
+
+		this.playerUuid = UUID.fromString(nbt.getString("PlayerUUID"));
+		this.deathMessage = nbt.getString("DeathMessage");
+
+		this.mainInventory = new ItemStack[36];
+		ListTag mainItemsNbt = nbt.getList("MainItems");
+
+		for (int i = 0; i < mainItemsNbt.tagCount(); i++) {
+			CompoundTag itemNbt = (CompoundTag) mainItemsNbt.tagAt(i);
+			int j = itemNbt.getByte("Slot") & 255;
+			if (j < this.mainInventory.length) {
+				this.mainInventory[j] = ItemStack.readItemStackFromNbt(itemNbt);
+			}
+		}
+
+		this.armorInventory = new ItemStack[4];
+		ListTag armorItemsNbt = nbt.getList("ArmorItems");
+
+		for (int i = 0; i < armorItemsNbt.tagCount(); i++) {
+			CompoundTag itemNbt = (CompoundTag) armorItemsNbt.tagAt(i);
+			int j = itemNbt.getByte("Slot") & 255;
+			if (j < this.armorInventory.length) {
+				this.armorInventory[j] = ItemStack.readItemStackFromNbt(itemNbt);
+			}
+		}
+
 		new FetchSkinThread(this);
 	}
 
 	@Override
 	public void writeToNBT(CompoundTag nbt) {
 		super.writeToNBT(nbt);
-		nbt.putString("playerUuid", this.playerUuid.toString());
-		nbt.putString("deathMessage", this.deathMessage);
+
+		nbt.putString("PlayerUUID", this.playerUuid.toString());
+		nbt.putString("DeathMessage", this.deathMessage);
+
+		ListTag mainItemsNbt = new ListTag();
+
+		for (int i = 0; i < this.mainInventory.length; i++) {
+			if (this.mainInventory[i] != null) {
+				CompoundTag itemNbt = new CompoundTag();
+				itemNbt.putByte("Slot", (byte) i);
+				this.mainInventory[i].writeToNBT(itemNbt);
+				mainItemsNbt.addTag(itemNbt);
+			}
+		}
+
+		ListTag armorItemsNbt = new ListTag();
+
+		for (int j = 0; j < this.armorInventory.length; j++) {
+			if (this.armorInventory[j] != null) {
+				CompoundTag itemNbt = new CompoundTag();
+				itemNbt.putByte("Slot", (byte)(j + 100));
+				this.armorInventory[j].writeToNBT(itemNbt);
+				armorItemsNbt.addTag(itemNbt);
+			}
+		}
+
+		nbt.put("MainItems", mainItemsNbt);
+		nbt.put("ArmorItems", armorItemsNbt);
 	}
 }
