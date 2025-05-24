@@ -31,11 +31,11 @@
 			"dev.joee.btagraves.BtaGraves"
 		],
 		"initModels": [
-			"dev.joee.btagraves.BtaGraves"
+			"dev.joee.btagraves.InitModels"
 		]
 	},
   "mixins": [
-      "btagraves.mixins.json"
+		"btagraves.mixins.json"
   ],
 
   "depends": {

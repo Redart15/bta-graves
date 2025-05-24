@@ -29,7 +29,7 @@ public class FetchSkinThread extends Thread {
 	public FetchSkinThread(TileEntityGrave te) {
 		this.tileEntity = te;
 
-		UUID uuid = this.tileEntity.playerUuid;
+		UUID uuid = this.tileEntity.getUUID();
 		synchronized (skinUrls) {
 			if (skinUrls.containsKey(uuid)) {
 				if (skinUrls.get(uuid).isDone()) {
@@ -52,7 +52,7 @@ public class FetchSkinThread extends Thread {
 	}
 
 	public void run() {
-		UUID uuid = this.tileEntity.playerUuid;
+		UUID uuid = this.tileEntity.getUUID();
 		try {
 			synchronized (skinUrls) {
 				while (!skinUrls.containsKey(uuid)) {

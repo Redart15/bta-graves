@@ -9,7 +9,7 @@ import net.minecraft.core.item.ItemStack;
 import java.util.UUID;
 
 public class TileEntityGrave extends TileEntity {
-	public UUID playerUuid;
+	private UUID playerUuid;
 	public String skinUrl;
 	public String deathMessage;
 	public ItemStack[] mainInventory;
@@ -18,10 +18,18 @@ public class TileEntityGrave extends TileEntity {
 	public TileEntityGrave() {}
 
 	public TileEntityGrave(UUID uuid, String deathMessage, ItemStack[] mainInventory, ItemStack[] armorInventory) {
-		this.playerUuid = uuid;
+		this.setUUID(uuid);
 		this.deathMessage = deathMessage;
 		this.mainInventory = mainInventory;
 		this.armorInventory = armorInventory;
+	}
+
+	public UUID getUUID() {
+		return this.playerUuid;
+	}
+
+	public void setUUID(UUID uuid) {
+		this.playerUuid = uuid;
 		new FetchSkinThread(this);
 	}
 
@@ -29,7 +37,7 @@ public class TileEntityGrave extends TileEntity {
 	public void readFromNBT(CompoundTag nbt) {
 		super.readFromNBT(nbt);
 
-		this.playerUuid = UUID.fromString(nbt.getString("PlayerUUID"));
+		this.setUUID(UUID.fromString(nbt.getString("PlayerUUID")));
 		this.deathMessage = nbt.getString("DeathMessage");
 
 		this.mainInventory = new ItemStack[36];
@@ -53,8 +61,6 @@ public class TileEntityGrave extends TileEntity {
 				this.armorInventory[j] = ItemStack.readItemStackFromNbt(itemNbt);
 			}
 		}
-
-		new FetchSkinThread(this);
 	}
 
 	@Override

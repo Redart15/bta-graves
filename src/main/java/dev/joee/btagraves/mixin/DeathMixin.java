@@ -40,7 +40,7 @@ public class DeathMixin {
 
 			world.setBlockWithNotify(
 				x, y, z,
-				BtaGraves.GRAVE.id()
+				BtaGraves.graveBlock.id()
 			);
 			world.setTileEntity(
 				x, y, z,

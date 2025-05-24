@@ -1,5 +1,6 @@
 package dev.joee.btagraves.block;
 
+import com.mojang.nbt.tags.CompoundTag;
 import dev.joee.btagraves.BtaGraves;
 import dev.joee.btagraves.tileentity.TileEntityGrave;
 import net.minecraft.core.block.Block;
@@ -47,7 +48,7 @@ public class BlockLogicGrave extends BlockLogic  {
 
 		TileEntityGrave te = (TileEntityGrave) world.getTileEntity(x, y, z);
 
-		if (!player.uuid.equals(te.playerUuid)) {
+		if (!player.uuid.equals(te.getUUID())) {
 			return false;
 		}
 
@@ -66,19 +67,31 @@ public class BlockLogicGrave extends BlockLogic  {
 
 	@Override
 	public ItemStack[] getBreakResult(World world, EnumDropCause dropCause, int meta, TileEntity tileEntity) {
+		TileEntityGrave te = (TileEntityGrave) tileEntity;
+
 		ItemStack[] superItems = super.getBreakResult(world, dropCause, meta, tileEntity);
 		if (superItems == null) {
 			superItems = new ItemStack[] {};
 		}
-		ItemStack[] mainItems = ((TileEntityGrave) tileEntity).mainInventory;
-		ItemStack[] armorItems = ((TileEntityGrave) tileEntity).armorInventory;
+
+		if (superItems[0] != null) {
+			ItemStack graveStack = superItems[0];
+			CompoundTag nbt = graveStack.getData();
+			nbt.putString("PlayerUUID", te.getUUID().toString());
+			nbt.putString("DeathMessage", te.deathMessage);
+		}
+
+		ItemStack[] mainItems = te.mainInventory;
+		ItemStack[] armorItems = te.armorInventory;
 
 		List<ItemStack> resultList = new ArrayList<>(
 			superItems.length + mainItems.length + armorItems.length
 		);
+
 		Collections.addAll(resultList, superItems);
 		Collections.addAll(resultList, mainItems);
 		Collections.addAll(resultList, armorItems);
+
 		return resultList.toArray(new ItemStack[] {});
 	}
 
