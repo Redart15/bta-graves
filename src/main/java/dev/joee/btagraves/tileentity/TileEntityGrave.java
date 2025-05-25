@@ -90,11 +90,11 @@ public class TileEntityGrave extends TileEntity {
 
 		ListTag armorItemsNbt = new ListTag();
 
-		for (int j = 0; j < this.armorInventory.length; j++) {
-			if (this.armorInventory[j] != null) {
+		for (int i = 0; i < this.armorInventory.length; i++) {
+			if (this.armorInventory[i] != null) {
 				CompoundTag itemNbt = new CompoundTag();
-				itemNbt.putByte("Slot", (byte)(j + 100));
-				this.armorInventory[j].writeToNBT(itemNbt);
+				itemNbt.putByte("Slot", (byte) i);
+				this.armorInventory[i].writeToNBT(itemNbt);
 				armorItemsNbt.addTag(itemNbt);
 			}
 		}
