@@ -9,6 +9,7 @@ import net.minecraft.client.render.font.SF;
 import net.minecraft.client.render.model.Cube;
 import net.minecraft.client.render.tessellator.Tessellator;
 import net.minecraft.client.render.tileentity.TileEntityRenderer;
+import net.minecraft.core.block.Block;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -30,12 +31,16 @@ public class TileEntityRendererGrave extends TileEntityRenderer<TileEntityGrave>
 
 	@Override
 	public void doRender(Tessellator t, TileEntityGrave te, double x, double y, double z, float partialTick) {
+		Block<?> block = te.getBlock();
+		if (block == null) {
+			return;
+		}
+
 		if (LightmapHelper.isLightmapEnabled()) {
-			int coord = te.getBlock()
-				.getLightmapCoord(
-					te.worldObj,
-					te.x, te.y, te.z
-				);
+			int coord = block.getLightmapCoord(
+				te.worldObj,
+				te.x, te.y, te.z
+			);
 			LightmapHelper.setLightmapCoord(coord);
 		}
 
