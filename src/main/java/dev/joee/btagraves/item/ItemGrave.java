@@ -21,16 +21,20 @@ public class ItemGrave extends ItemBlock<BlockLogicGrave> {
 
 	@Override
 	public boolean onUseItemOnBlock(ItemStack stack, @Nullable Player player, World world, int x, int y, int z, Side side, double xPlaced, double yPlaced) {
+		int newX = x;
+		int newY = y;
+		int newZ = z;
+
 		if (!world.canPlaceInsideBlock(x, y, z)) {
-			x += side.getOffsetX();
-			y += side.getOffsetY();
-			z += side.getOffsetZ();
+			newX += side.getOffsetX();
+			newY += side.getOffsetY();
+			newZ += side.getOffsetZ();
 		}
 
 		boolean didPlace = super.onUseItemOnBlock(stack, player, world, x, y, z, side, xPlaced, yPlaced);
 
 		if (didPlace) {
-			TileEntityGrave te = (TileEntityGrave) world.getTileEntity(x, y, z);
+			TileEntityGrave te = (TileEntityGrave) world.getTileEntity(newX, newY, newZ);
 
 			CompoundTag nbt = stack.getData();
 
