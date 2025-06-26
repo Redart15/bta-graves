@@ -49,6 +49,10 @@ public class BlockLogicGrave extends BlockLogic  {
 		}
 
 		TileEntityGrave te = (TileEntityGrave) world.getTileEntity(x, y, z);
+		if (te == null) {
+			te = TileEntityGrave.getDefault();
+			world.setTileEntity(x, y, z, te);
+		}
 
 		if (!player.uuid.equals(te.getUUID())) {
 			return false;
@@ -76,6 +80,9 @@ public class BlockLogicGrave extends BlockLogic  {
 	@Override
 	public ItemStack[] getBreakResult(World world, EnumDropCause dropCause, int meta, TileEntity tileEntity) {
 		TileEntityGrave te = (TileEntityGrave) tileEntity;
+		if (te == null) {
+			te = TileEntityGrave.getDefault();
+		}
 
 		ItemStack[] superItems = super.getBreakResult(world, dropCause, meta, tileEntity);
 		if (superItems == null) {

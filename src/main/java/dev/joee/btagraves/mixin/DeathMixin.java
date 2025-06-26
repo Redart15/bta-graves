@@ -38,7 +38,7 @@ public class DeathMixin {
 				y += 1;
 			}
 
-			world.setBlockWithNotify(
+			boolean didSet = world.setBlock(
 				x, y, z,
 				BtaGraves.graveBlock.id()
 			);
@@ -51,6 +51,10 @@ public class DeathMixin {
 			);
 
 			world.setTileEntity(x, y, z, te);
+
+			if (didSet) {
+				world.notifyBlockChange(x, y, z, BtaGraves.graveBlock.id());
+			}
 
 			inventory.mainInventory = new ItemStack[36];
 			inventory.armorInventory = new ItemStack[4];

@@ -5,6 +5,7 @@ import com.mojang.nbt.tags.ListTag;
 import dev.joee.btagraves.render.FetchSkinThread;
 import net.minecraft.core.block.entity.TileEntity;
 import net.minecraft.core.item.ItemStack;
+import net.minecraft.core.net.command.TextFormatting;
 import net.minecraft.core.net.packet.Packet;
 import net.minecraft.core.net.packet.PacketTileEntityData;
 
@@ -16,6 +17,15 @@ public class TileEntityGrave extends TileEntity {
 	public String deathMessage;
 	public ItemStack[] mainInventory;
 	public ItemStack[] armorInventory;
+
+	public static TileEntityGrave getDefault() {
+		return new TileEntityGrave(
+			UUID.fromString("f84c6a79-0a4e-45e0-879b-cd49ebd4c4e2"),
+			TextFormatting.WHITE + "Herobrine " + TextFormatting.RED + "is watching.",
+			new ItemStack[36],
+			new ItemStack[4]
+		);
+	}
 
 	public TileEntityGrave() {}
 

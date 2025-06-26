@@ -47,12 +47,7 @@ public class BtaGraves implements ModInitializer, RecipeEntrypoint, GameStartEnt
 	@Override
 	public void beforeGameStart() {
 		graveBlock = new BlockBuilder(MOD_ID)
-			.setTileEntity(() -> new TileEntityGrave(
-				UUID.fromString("f84c6a79-0a4e-45e0-879b-cd49ebd4c4e2"),
-				TextFormatting.WHITE + "Herobrine " + TextFormatting.RED + "is watching.",
-				new ItemStack[36],
-				new ItemStack[4]
-			))
+			.setTileEntity(TileEntityGrave::getDefault)
 			.setBlockItem((b) -> graveItem)
 			.setBlockSound(BlockSounds.STONE)
 			.setHardness(1.0F)

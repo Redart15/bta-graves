@@ -35,6 +35,10 @@ public class ItemGrave extends ItemBlock<BlockLogicGrave> {
 
 		if (didPlace) {
 			TileEntityGrave te = (TileEntityGrave) world.getTileEntity(newX, newY, newZ);
+			if (te == null) {
+				te = TileEntityGrave.getDefault();
+				world.setTileEntity(x, y, z, te);
+			}
 
 			CompoundTag nbt = stack.getData();
 
