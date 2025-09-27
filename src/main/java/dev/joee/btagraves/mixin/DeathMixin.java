@@ -56,8 +56,8 @@ public class DeathMixin {
 				world.notifyBlockChange(x, y, z, BtaGraves.graveBlock.id());
 			}
 
-			inventory.mainInventory = new ItemStack[36];
-			inventory.armorInventory = new ItemStack[4];
+			inventory.mainInventory = new ItemStack[inventory.mainInventory.length];
+			inventory.armorInventory = new ItemStack[inventory.armorInventory.length];
 			inventory.setChanged();
 		}
 	}
