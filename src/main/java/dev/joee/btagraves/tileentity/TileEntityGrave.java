@@ -25,8 +25,8 @@ public class TileEntityGrave extends TileEntity {
 		return new TileEntityGrave(
 			UUID.fromString("f84c6a79-0a4e-45e0-879b-cd49ebd4c4e2"),
 			TextFormatting.WHITE + "Herobrine " + TextFormatting.RED + "is watching.",
-			new ItemStack[36],
-			new ItemStack[4]
+			new ItemStack[ContainerInventory.playerMainInventorySize()],
+			new ItemStack[ARMOR_INVENTORY_SIZE]
 		);
 	}
 
